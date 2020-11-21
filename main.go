@@ -9,18 +9,32 @@ import (
 	"os"
 )
 
+func (s *slide) Borrar(id int) {
+	var aux []*procesos
+	for _, v := range s.Procesos {
+		if v.Id == id {
+			fmt.Println("ID : ", v.Id, " Borrado")
+			v.Inicia = false
+
+		} else {
+			aux = append(aux, v)
+		}
+	}
+	s.Procesos = aux
+}
+
 
 func main(){
 	
 	
 	var salir = true
 	var opc string
-	//var oproc uint64
+	var oproc int
 	inicia := make(chan bool)
 	var ID []*procesos	
 	var addpro *procesos
 	var cadena = &slide{Procesos:ID,}
-	var id = 0
+	var id int
 	var exit = bufio.NewScanner(os.Stdin)
 	
 	for sal := true; sal; sal = salir {
@@ -42,11 +56,7 @@ func main(){
 			addpro = &procesos{Id: id}
 			cadena.Inserta(addpro)
 			go addpro.start()
-			id = id + 1
-			
-			
-			
-			
+			id = id + 1			
 			break		
 			
 			
@@ -56,11 +66,15 @@ func main(){
 			go cadena.Muestra(inicia)
 			exit.Scan()
 			inicia <- true
-			
+			break
 
 		case "3":
 			
-			
+			fmt.Println("Numero ID por BORRAR? ")
+			fmt.Scan(&oproc)
+			go cadena.Borrar(oproc)
+			break
+
 		
 		case "4":
 				
@@ -110,7 +124,7 @@ func (s *slide) Muestra(inicia chan bool) {
 			return
 		default:
 			for _, v := range s.Procesos {
-				fmt.Println("Id: ", v.Id, " :", v.contador)
+				fmt.Println("ID: ", v.Id, " -- ", v.contador)
 				time.Sleep(time.Millisecond * 500)
 
 			}
@@ -118,3 +132,4 @@ func (s *slide) Muestra(inicia chan bool) {
 		}
 	}
 }
+
